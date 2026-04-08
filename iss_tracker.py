@@ -149,11 +149,14 @@ def run_gui(interval, output, count):
 <head>
   <meta charset='UTF-8'>
   <title>ISS Tracker</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     body { font-family: Arial, sans-serif; margin: 24px; }
     h1 { margin-bottom: 10px; }
     .label { margin: 6px 0; }
     .status { color: #555; margin-top: 14px; }
+    #map { height: 400px; width: 100%; margin-top: 20px; }
   </style>
 </head>
 <body>
@@ -162,7 +165,14 @@ def run_gui(interval, output, count):
   <div class='label'><strong>Latitude:</strong> <span id='latitude'>-</span></div>
   <div class='label'><strong>Longitude:</strong> <span id='longitude'>-</span></div>
   <div class='status' id='status'>Starting...</div>
+  <div id="map"></div>
   <script>
+    var map = L.map('map').setView([0, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    var issMarker = L.marker([0, 0]).addTo(map).bindPopup('ISS Position');
+
     async function refresh() {
       try {
         const response = await fetch('/data');
@@ -180,6 +190,10 @@ def run_gui(interval, output, count):
           document.getElementById('timestamp').textContent = data.latest.timestamp;
           document.getElementById('latitude').textContent = data.latest.latitude;
           document.getElementById('longitude').textContent = data.latest.longitude;
+          var lat = parseFloat(data.latest.latitude);
+          var lon = parseFloat(data.latest.longitude);
+          issMarker.setLatLng([lat, lon]).openPopup();
+          map.setView([lat, lon], 4);
         }
       } catch (err) {
         document.getElementById('status').textContent = 'Error fetching data.';

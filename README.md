@@ -37,7 +37,7 @@ By default, the application fetches the ISS position every 5 seconds and prints 
   - Save results to a CSV file.
   - Example: `python iss_tracker.py --output iss_log.csv`
 - `--gui`
-  - Launch a simple graphical interface instead of the console.
+  - Launch a simple graphical interface with a live map showing the ISS position.
   - Example: `python iss_tracker.py --gui`
 
 ### Examples
